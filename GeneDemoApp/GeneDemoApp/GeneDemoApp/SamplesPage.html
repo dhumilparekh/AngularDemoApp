@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Gene Demo App</title>
+</head>
+<body>
+    <div>
+        <h2>All Samples</h2>
+        <!--<ul id="Samples"></ul>-->
+        <div>
+            <table id="sampleList">
+                <tr>
+                    <th>
+                        Sample Id
+                    </th>
+                    <th>
+                        Barcode
+                    </th>
+                    <th>
+                        Created At
+                    </th>
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Last Name
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+    <div>
+        <h2>Search by Status</h2>
+        <input type="text" id="StatusId" size="25" />
+        <input type="button" value="Search" onclick="findbyStatus();" />
+        <p id="samples"></p>
+        <div>
+            <table id="sampleListByStatus">
+                <tr>
+                    <th>
+                        Sample Id
+                    </th>
+                    <th>
+                        Barcode
+                    </th>
+                    <th>
+                        Created At
+                    </th>
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Last Name
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+    <div>
+        <h2>Search by CreatedBy Name</h2>
+        <input type="text" id="createdByName" size="25" />
+        <input type="button" value="Search" onclick="findbyUserName();" />
+        <div>
+            <table id="sampleListBycreatedByName">
+                <tr>
+                    <th>
+                        Sample Id
+                    </th>
+                    <th>
+                        Barcode
+                    </th>
+                    <th>
+                        Created At
+                    </th>
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Last Name
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <!--<h2>Search by ID</h2>
+        <input type="text" id="prodId" size="5" />
+        <input type="button" value="Search" onclick="find();" />
+        <p id="samples"></p>-->
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var uri = 'api/SamplesAPI';
+
+    $(document).ready(function () {
+      // Send an AJAX request
+      $.getJSON(uri)
+          .done(function (data) {
+              // On success, 'data' contains a list of samples.
+              //console.log(data);
+              $.each(data, function (key, item) {
+                  console.log(item);
+              // Add a list item for the product.
+                //$('<li>', { text: (item) }).appendTo($('#samples'));
+                  var html = '<tr><td>' + item.SampleId + '</td><td>' + item.CreatedAt + '</td><td>' + item.Barcode
+                            + '</td><td>' + item.FirstName + '</td><td>' + item.LastName
+                            + '</td><td>' + item.Status + '</td></tr>';
+                  $('#sampleList').append(html);
+            });
+          });
+    });
+
+    function formatItem(item) {
+      return item.Name + ': $' + item.Price;
+    }
+
+    function findbyUserName() {
+        var name = $('#createdByName').val();
+      $.getJSON(uri + '?name=' + name)
+          .done(function (data) {
+              $.each(data, function (key, item) {
+                  console.log(item);
+                  // Add a list item for the product.
+                  //$('<li>', { text: (item) }).appendTo($('#samples'));
+                  var html = '<tr><td>' + item.SampleId + '</td><td>' + item.CreatedAt + '</td><td>' + item.Barcode
+                            + '</td><td>' + item.FirstName + '</td><td>' + item.LastName
+                            + '</td><td>' + item.Status + '</td></tr>';
+                  $('#sampleListBycreatedByName').append(html);
+              });
+          })
+          .fail(function (jqXHR, textStatus, err) {
+              $('#sampleListBycreatedByName').text('Error: ' + err);
+          });
+    }
+
+    function findbyStatus()
+    {
+        var id = $('#StatusId').val();
+        $.getJSON(uri + '/' + id)
+            .done(function (data) {
+                $.each(data, function (key, item) {
+                    // Add a list item for the product.
+                    //$('<li>', { text: (item) }).appendTo($('#samples'));
+                    var html = '<tr><td>' + item.SampleId + '</td><td>' + item.CreatedAt + '</td><td>' + item.Barcode
+                              + '</td><td>' + item.FirstName + '</td><td>' + item.LastName
+                              + '</td><td>' + item.Status + '</td></tr>';
+                    $('#sampleListByStatus').append(html);
+                });
+            })
+            .fail(function (jqXHR, textStatus, err) {
+                $('#person-lis').text('Error: ' + err);
+            });
+    }
+
+    </script>
+</body>
+</html>

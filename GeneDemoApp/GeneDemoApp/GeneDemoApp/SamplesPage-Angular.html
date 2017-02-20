@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script src="Scripts/angular.js"></script>
+    <script src="Scripts/App/Samples.js"></script>
+</head>
+<body>
+    <div ng-app="SampleApp" ng-controller="SampleCtrl">
+        <div>
+            <!--<input type="button" value="Click to get" ng-click="loadSample()" />-->
+            <input type="text" ng-model="filterbyuser"/>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sample Id</th>
+                    <th>Barcode</th>
+                    <th>Created At</th>
+                    <th>Created By First Name</th>
+                    <th>Created By Last Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tr ng-repeat="sample in samples | filter:filterbyuser">
+                <td data-ng-bind="sample.SampleId"></td>
+                <td data-ng-bind="sample.Barcode"></td>
+                <td data-ng-bind="sample.CreatedAt"></td>
+                <td data-ng-bind="sample.FirstName"></td>
+                <td data-ng-bind="sample.LastName"></td>
+                <td data-ng-bind="sample.Status"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

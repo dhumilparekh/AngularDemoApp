@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using GeneDemoApp.Models;
+
+namespace GeneDemoApp.Controllers
+{
+    public class SamplesController : Controller
+    {
+        private GeneModel db = new GeneModel();
+
+        // GET: Samples
+        public ActionResult Index()
+        {
+            var samples = db.Samples.Include(s => s.Status).Include(s => s.User);
+            return View(samples.ToList());
+        }
+
+        // GET: Samples/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Sample sample = db.Samples.Find(id);
+            if (sample == null)
+            {
+                return HttpNotFound();
+            }
+            return View(sample);
+        }
+
+        // GET: Samples/Create
+        public ActionResult Create()
+        {
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Status1");
+            ViewBag.CreatedBy = new SelectList(db.Users, "UserId", "FirstName");
+            return View();
+        }
+
+        // POST: Samples/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "SampleId,Barcode,CreatedAt,CreatedBy,StatusId")] Sample sample)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Samples.Add(sample);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Status1", sample.StatusId);
+            ViewBag.CreatedBy = new SelectList(db.Users, "UserId", "FirstName", sample.CreatedBy);
+            return View(sample);
+        }
+
+        // GET: Samples/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Sample sample = db.Samples.Find(id);
+            if (sample == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Status1", sample.StatusId);
+            ViewBag.CreatedBy = new SelectList(db.Users, "UserId", "FirstName", sample.CreatedBy);
+            return View(sample);
+        }
+
+        // POST: Samples/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "SampleId,Barcode,CreatedAt,CreatedBy,StatusId")] Sample sample)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(sample).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Status1", sample.StatusId);
+            ViewBag.CreatedBy = new SelectList(db.Users, "UserId", "FirstName", sample.CreatedBy);
+            return View(sample);
+        }
+
+        // GET: Samples/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Sample sample = db.Samples.Find(id);
+            if (sample == null)
+            {
+                return HttpNotFound();
+            }
+            return View(sample);
+        }
+
+        // POST: Samples/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Sample sample = db.Samples.Find(id);
+            db.Samples.Remove(sample);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}
